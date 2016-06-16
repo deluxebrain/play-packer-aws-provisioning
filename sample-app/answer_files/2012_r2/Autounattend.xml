@@ -80,7 +80,7 @@
                 <HelpCustomized>false</HelpCustomized>
             </OEMInformation>
             <ComputerName>mfapi</ComputerName>
-            <TimeZone>GMT Standard Time</TimeZone>
+            <TimeZone>UTC</TimeZone>
             <DisableAutoDaylightTimeSet>false</DisableAutoDaylightTimeSet>
             <RegisteredOwner/>
         </component>
