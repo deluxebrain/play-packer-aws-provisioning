@@ -1,15 +1,16 @@
 {
   "variables": {
-    "build_version": "1.0.0",
-    "ovf_source_path": "../images/sample-app-1.0.0.ovf"
+    "images_directory": "/var/media/images/",
+    "app_name": "sample-app",
+    "build_version": "1.0.0"
   },
   "builders": [
     {
       "type": "virtualbox-iso",
       "communicator": "winrm",
       "name": "basebox-vbox",
-      "vm_name": "sample-app-{{user `build_version`}}",
-      "output_directory": "/var/media/images/{{.BuildName}}",
+      "vm_name": "{{user `app_name`}}-{{user `build_version`}}",
+      "output_directory": "{{user `images_directory`}}vbox/{{user `app_name`}}-{{user `build_version`}}/basebox-vbox/",
       "iso_url": "http://download.microsoft.com/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.ISO",
       "iso_checksum_type": "md5",
       "iso_checksum": "458ff91f8abc21b75cb544744bf92e6a",
@@ -54,8 +55,10 @@
     {
       "type": "virtualbox-ovf",
       "name": "devbox-vbox",
+      "vm_name": "{{user `app_name`}}-{{user `build_version`}}",
+      "output_directory": "{{user `images_directory`}}vbox/{{user `app_name`}}-{{user `build_version`}}/devbox-vbox/",
       "communicator": "winrm",
-      "source_path": "{{user `ovf_source_path`}}",
+      "source_path": "{{user `images_directory`}}vbox/{{user `app_name`}}-{{user `build_version`}}/basebox-vbox/{{user `app_name`}}-{{user `build_version`}}.ovf",
       "headless": false,
       "guest_additions_mode": "disable",
       "boot_wait": "30s",
@@ -157,7 +160,7 @@
       "type": "vagrant",
       "compression_level":1,
       "keep_input_artifact": true,
-      "output": "sample-app-{{.Provider}}-{{user `build_version`}}.box",
+      "output": "{{user `images_directory`}}vagrant/{{user `app_name`}}-{{user `build_version`}}/{{user `app_name`}}-{{.Provider}}-{{user `build_version`}}.box",
       "vagrantfile_template": "vagrantfile-windows_2012_r2.template",
       "only":["devbox-vbox"]
     }
