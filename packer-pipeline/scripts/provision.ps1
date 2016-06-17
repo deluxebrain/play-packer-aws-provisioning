@@ -1,7 +1,9 @@
 (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')))>$null 2>&1
 choco install 7zip -y
-# Deprecated - part of PowerShell now
+
+# Deprecated - part of Powershell and Windows Management Framework
 # choco install seek-dsc -y
+# choco install powershell -y
 
 # Disable Windows Updates
 cmd /c reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 1 /f
