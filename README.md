@@ -1,6 +1,16 @@
 # play-packer-aws-provisioning
 Using Packer to provision Windows servers in AWS
 
+
+## PowerShell DSC
+
+Packer is used to build up role specific boxes (via a build chain back to common *base* builds). These are then configurated per application using *PowerShell DSC*. 
+
+PowerShell DSC makes it possible to declaratively set the desired state of a server, including Windows Features, Firewall rules, Web applications, etc.
+
+DSC is powered by a large amount of third-party modules that are published by MSFT and the PowerShell community. These are available from the central PowerShell Gallery.
+
+
 ## Step through
 
 1. Ensure the ```PACKER_CACHE_DIR``` environment variable is set
@@ -41,4 +51,5 @@ Using Packer to provision Windows servers in AWS
   vagrant box remove sample-app-1.0.0
   vagrant box list
   ```
+
 
