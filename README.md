@@ -1,6 +1,13 @@
 # play-packer-aws-provisioning
 Using Packer to provision Windows servers in AWS
 
+## Background reading:
+
+1. [PowerShell Gallery](https://www.powershellgallery.com/packages)
+2. [PowerShell modules source](https://github.com/PowerShell/)
+3. [Tutorial](https://dennypc.wordpress.com/2014/12/02/vagrant-provisioning-powershell-dsc/) going through using DSC with Vagrant
+4. [Tutorial series](http://www.onegeek.com.au/articles/machine-factories-part1-vagrant) going through provisioning via Virtualbox through to AWS
+5. [Vagrant-DSC plugin](https://github.com/mefellows/vagrant-dsc)
 
 ## PowerShell DSC
 
@@ -9,7 +16,6 @@ Packer is used to build up role specific boxes (via a build chain back to common
 PowerShell DSC makes it possible to declaratively set the desired state of a server, including Windows Features, Firewall rules, Web applications, etc.
 
 DSC is powered by a large amount of third-party modules that are published by MSFT and the PowerShell community. These are available from the central PowerShell Gallery.
-
 
 ## Step through
 
@@ -51,5 +57,4 @@ DSC is powered by a large amount of third-party modules that are published by MS
   vagrant box remove sample-app-1.0.0
   vagrant box list
   ```
-
 
