@@ -1,0 +1,141 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+# Global variables
+PROJ_DIR = "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/"
+MODULE_DIR = GUEST_PROJ_DIR + "des/modules/"
+MOF_DIR = GUEST_PROJ_DIR + "dsc/mof/"
+WEBAPP_DIR = GUEST_PROJ_DIR + "MyWebsite/"
+HOSTNAME = "webserver01"
+IP_ADDRESS = "10.0.0.1"
+WINRM_HOST_PORT = 5895
+WINRM_PASSWORD = "FooBarBaz"
+
+# Script to load DSC module dependencies
+# - Installs the third-party modules va PowerShellGet
+# - Installs the projects custom dsc modules
+$dscModDepScript = <<SCRIPT
+  Write-Host "Installing Third-Party DSC Modules"
+  # Install-Module -Name xWebAdministration -Version 1.3.2.2
+  if (Test-Path($Args[0])) {
+    Write-Host "Installing Project DSC Modules"
+    Copy-Item ($Args[0]) -Destination (\$env:ProgramFiles + "\\WindowsPowerShell\\Modules\\") - Recurse -Container -Force
+  }
+  Get-DscResource
+SCRIPT
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  
+  # Every Vagrant virtual environment requires a box to build off of.
+  config.vm.box = "sample-app-1.0.0"
+  config.vm.communicator = "winrm"
+
+  # Configure network
+  # config.vm.network "private_network", ip: IP_ADDRESS
+  config.vm.hostname = HOSTNAME
+
+  # Configure port forwarding 
+  config.vm.network :forwarded_port,   guest: 3389, host: 3399,       id: "rdp",   auto_correct: false
+  config.vm.network :forwarded_port,   guest: 5985, host: WINRM_HOST_PORT,  id: "winrm", auto_correct: false
+  config.vm.network :forwarded_port,   guest: 80,   host: 8000,       id: "web" # Port forward for IIS
+  config.vm.network :forwarded_port,   guest: 443,  host: 8443,       id: "ssl" # Port forward for SSL IIS
+  config.vm.network :forwarded_port,   guest: 4018, host: 4018,       id: "remotevsdebug"
+
+  # Configure winrm
+  config.winrm.host = "localhost"
+  config.winrm.password = WINRM_PASSWORD
+  config.winrm.port = WINRM_HOST_PORT
+  config.winrm.guest_port = WINRM_HOST_PORT
+  config.vm.guest = :windows
+  config.vm.communicator = "winrm"
+
+  # GUI or headless
+  config.vm.provider "virtualbox" do |v|
+    v.gui = true
+  end
+
+  # Install any DSC module dependencies
+  config.vm.provision "shell" do |s|
+      s.inline = $dscModDepScript
+      s.args = [MODULE_DIR + "*"]
+  end
+
+  # Initialize DSC configuration and generate mof file
+  config.vm.provision "shell" do |s|
+    s.path = "dsc/config/MyWebsiteConfig.ps1"
+    s.args = [HOSTNAME, MOF_DIR, WEBAPP_DIR]
+  end
+
+  # Apply DSC configuration
+  config.vm.provision "shell" do |s|
+    s.inline = "Start-DSCConfiguration -Path $Args[0] -Force -Wait -Verbose -Debug"
+    s.args = [MOF_DIR + "MyWebsite\\"]
+  end
+
+
+
+
+
+
+
+
+
+
+
+  config.vm.synced_folder '.', "/cygdrive/c/vagrant",
+    type: "rsync",
+    rsync__auto: "true",
+    rsync__exclude: [".git/","*.box", "output-*"],
+    id: "vagrant"
+
+  # Run DSC
+  config.vm.provision "dsc", run: "always" do |dsc|
+
+    # Set of module paths relative to the Vagrantfile dir.
+    #
+    # These paths are added to the DSC Configuration running
+    # environment to enable local modules to be addressed.
+    #
+    # @return [Array] Set of relative module paths.
+    dsc.module_path = ["urlsvc/ShortUrlWebApp/modules"]
+
+    # The path relative to `dsc.manifests_path` pointing to the Configuration file
+    dsc.configuration_file  = "MyWebsite.ps1"
+
+    # The path relative to Vagrantfile pointing to the Configuration Data file
+    dsc.configuration_data_file  = "urlsvc/ShortUrlWebApp/manifests/MyConfig.psd1"
+
+    # The Configuration Command to run. Assumed to be the same as the `dsc.configuration_file`
+    # (sans extension) if not provided.
+    dsc.configuration_name = "MyWebsite"
+
+    # Relative path to a pre-generated MOF file.
+    #
+    # Path is relative to the folder containing the Vagrantfile.
+    # dsc.mof_path = "mof"
+
+    # Relative path to the folder containing the root Configuration manifest file.
+    # Defaults to 'manifests'.
+    #
+    # Path is relative to the folder containing the Vagrantfile.
+    dsc.manifests_path = "urlsvc/ShortUrlWebApp/manifests"
+
+    # Commandline arguments to the Configuration run
+    #
+    # Set of Parameters to pass to the DSC Configuration.
+    dsc.configuration_params = {"-MachineName" => "localhost", "-WebAppPath" => "c:\\vagrant\\buildTemp\\_PublishedWebsites\\ShortUrlWebApp", "-HostName" => hostname}
+
+    # The type of synced folders to use when sharing the data
+    # required for the provisioner to work properly.
+    #
+    # By default this will use the default synced folder type.
+    # For example, you can set this to "nfs" to use NFS synced folders.
+    # dsc.synced_folder_type = ""
+
+    # Temporary working directory on the guest machine.
+    # dsc.temp_dir = "c:/tmp/vagrant-dsc"
+  end
+end
