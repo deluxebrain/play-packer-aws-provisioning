@@ -128,8 +128,21 @@
       "elevated_user": "vagrant",
       "elevated_password": "FooBarBaz",
       "scripts": [
+        "./scripts/provision-powershell.ps1"
+      ],
+      "only":["devbox-vbox"]
+    },
+    {
+      "type": "windows-restart",
+      "only":["devbox-vbox"]
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "FooBarBaz",
+      "scripts": [
         "./scripts/provision.ps1",
-        "./scripts/provision-powershell.ps1",
+        "./scripts/provision-dsc.ps1",
         "./scripts/provision-agent.ps1",
         "./scripts/provision-ruby.ps1",
         "./scripts/provision-dev.ps1"

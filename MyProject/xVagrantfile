@@ -24,23 +24,6 @@ HOSTNAME = "webserver01"
 # IP address has to be from its own subnet
 IP_ADDRESS = "10.0.0.30"
 
-# Guest paths
-GUEST_PROJ_DIR = "c:\\vagrant\\"
-GUEST_MOF_DIR = GUEST_PROJ_DIR + "DSC\\MOF\\"
-
-# Script to Load DSC Module Dependencies
-# - Installs Third-Party modules via PowerShellGet
-# - Installs the Project's Custom DSC Modules
-$dscModDepScript = <<SCRIPT
-  Write-Host "Installing Third-Party DSC Modules"
-  # Install-Module -Name xWebAdministration -Version 1.3.2.2
-    if (Test-Path($Args[0])) {
-      Write-Host "Installing Project DSC Modules"
-      Copy-Item ($Args[0]) -Destination (\$env:ProgramFiles + "\\WindowsPowerShell\\Modules\\") -Recurse -Container -Force
-    }
-    Get-DscResource
-SCRIPT
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   # Every Vagrant virtual environment requires a box to build off of.
@@ -73,12 +56,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # Use rsync to share the current working directory into the /cygdrive/c/vagrant on the guest machine
-  # config.vm.synced_folder '.', 
-  #  "c:/vagrant",
-  #  type: "rsync",
-  #  owner: "vagrant",
-  #  rsync__auto: "true",
-  #  rsync__exclude: [".git/","*.box", "output-*"]
+  config.vm.synced_folder '.', 
+    "c:/vagrant",
+    type: "rsync",
+    owner: "vagrant",
+    rsync__auto: "true",
+    rsync__exclude: [".git/","*.box", "output-*"]
 
   # Alternatively use native vbox shares
   # config.vm.synced_folder ".", "c:/vagrant"
@@ -91,15 +74,53 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   config.hostmanager.aliases = %w(example-box.localdomain example-box-alias)
   # end
   
-  # Initialize DSC Configuration and Generate MOF file
-  config.vm.provision "shell" do |s|
-    s.path = "dsc/manifests/MyWebsite.ps1"
-    s.args = ["localhost", APP_SOURCE_DIR, HOSTNAME]
-  end
+  # Run DSC
+  config.vm.provision "dsc" do |dsc|
 
-  # Apply DSC Configuration
-  config.vm.provision "shell" do |s|
-    s.inline = "Start-DSCConfiguration -Path $Args[0] -Force -Wait -Verbose -Debug"
-    s.args = [GUEST_MOF_DIR + "MySite\\"]
+    #
+    # Set up folder sharing 
+    # Required for the provisioner to work correctly
+    #
+  
+    # Temp working folder on the guest machine
+    dsc.temp_dir = "c:/tmp/vagrant-dsc"
+
+    # Type of synced folders to use
+    # E.g. "nfs" to use NFS synced folders
+    # Defaults to VirtualBox
+    dsc.synced_folder_type = "rsync"
+
+    #
+    # Set of module paths relative to the Vagrantfile directory
+    #
+
+    # These paths are added to the DSC configuration running
+    # environment to enable local modules to be addresses
+    # dsc.module_path = [DSC_MODULES_DIR]
+
+    # Path to the directory containing the root configuration manifest file
+    # Defaults to 'manifests'
+    dsc.manifests_path = DSC_MANIFESTS_DIR
+
+    # Path relative to the manifests path containing the configuration file
+    dsc.configuration_file = "MyWebsite.ps1"
+
+    # Path relative to the configuration data file
+    dsc.configuration_data_file = DSC_MANIFESTS_DIR + "MyConfig.psd1"
+
+    # The configuration command to run
+    # Assumed to be the same as the configuration file sans extension if missing
+    dsc.configuration_name = "MyWebsite"
+
+    # Path to the directory containing a pre-generated MOF file
+    # Uncomment to use a pre-compiled MOF file
+    # dsc.mof_path = $MOF_DIR
+    
+    # Commandline arguments for the configuration command
+    dsc.configuration_params = {
+      "-MachineName" => "localhost",
+      "-SourcePath" => "#{APP_SOURCE_DIR}",
+      "-HostName" => "#{HOSTNAME}"
+    }
   end
 end
