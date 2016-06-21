@@ -27,12 +27,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "sample-app-1.0.0"
+  config.vm.guest = :windows
   config.vm.communicator = "winrm"
 
   # Create a private network on the specified ip address and hostname
   config.vm.network "private_network", ip: IP_ADDRESS
   config.vm.hostname = HOSTNAME
-
 
   # Configure port forwarding 
   config.vm.network :forwarded_port,   guest: 3389, host: 3399,       id: "rdp",   auto_correct: false
@@ -46,8 +46,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.winrm.password = WINRM_PASSWORD
   config.winrm.port = WINRM_HOST_PORT
   config.winrm.guest_port = WINRM_HOST_PORT
-  config.vm.guest = :windows
-  config.vm.communicator = "winrm"
 
   # GUI or headless
   config.vm.provider "virtualbox" do |v|
@@ -61,6 +59,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     rsync__auto: "true",
     rsync__exclude: [".git/","*.box", "output-*"],
     id: "vagrant"
+
+  # Setup /etc/hosts ( or hosts.ini ) on guest and host
+  if Vagrant.has.plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = false
+    config.hostmanager.manage_guest = true
+    config.hostmanager.aliases = %w(example-box.localdomain example-box-alias)
+  end
   
   # Run DSC
   config.vm.provision "dsc" do |dsc|
@@ -91,15 +97,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Commandline arguments for the configuration command
     dsc.configuration_params = {
       "-MachineName" => "localhost",
-      "-SourcePath" => "#{APP_SOURCE_DIR}"
+      "-SourcePath" => "#{APP_SOURCE_DIR}",
       "-HostName" => "#{HOSTNAME}"
     }
-
-  config.vm.synced_folder '.', "/cygdrive/c/vagrant",
-    type: "rsync",
-    rsync__auto: "true",
-    rsync__exclude: [".git/","*.box", "output-*"],
-    id: "vagrant"
-
   end
 end
