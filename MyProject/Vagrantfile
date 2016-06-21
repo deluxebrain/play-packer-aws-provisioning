@@ -21,7 +21,8 @@ DSC_MOF_DIR = "dsc/mof/"
 
 # Host setup
 HOSTNAME = "webserver01"
-IP_ADDRESS = "10.0.0.1"
+# IP address has to be from its own subnet
+IP_ADDRESS = "10.0.0.30"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
@@ -32,6 +33,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a private network on the specified ip address and hostname
   config.vm.network "private_network", ip: IP_ADDRESS
+  # Wont work until get vbox working with router
+  # config.vm.network "private_network", type: "dhcp"
   config.vm.hostname = HOSTNAME
 
   # Configure port forwarding 
@@ -54,44 +57,63 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Use rsync to share the current working directory into the /cygdrive/c/vagrant on the guest machine
   config.vm.synced_folder '.', 
-    "/cygdrive/c/vagrant",
+    "c:/vagrant",
     type: "rsync",
+    owner: "vagrant",
     rsync__auto: "true",
-    rsync__exclude: [".git/","*.box", "output-*"],
-    id: "vagrant"
+    rsync__exclude: [".git/","*.box", "output-*"]
+
+  # Alternatively use native vbox shares
+  # config.vm.synced_folder ".", "c:/vagrant"
 
   # Setup /etc/hosts ( or hosts.ini ) on guest and host
-  if Vagrant.has.plugin?("vagrant-hostmanager")
-    config.hostmanager.enabled = true
-    config.hostmanager.manage_host = false
-    config.hostmanager.manage_guest = true
-    config.hostmanager.aliases = %w(example-box.localdomain example-box-alias)
-  end
+  # if Vagrant.has_plugin?("vagrant-hostmanager")
+  #   config.hostmanager.enabled = true
+  #   config.hostmanager.manage_host = false
+  #   config.hostmanager.manage_guest = true
+  #   config.hostmanager.aliases = %w(example-box.localdomain example-box-alias)
+  # end
   
   # Run DSC
   config.vm.provision "dsc" do |dsc|
 
+    #
+    # Set up folder sharing 
+    # Required for the provisioner to work correctly
+    #
+  
+    # Temp working folder on the guest machine
+    dsc.temp_dir = "c:/tmp/vagrant-dsc"
+
+    # Type of synced folders to use
+    # E.g. "nfs" to use NFS synced folders
+    # Defaults to VirtualBox
+    dsc.synced_folder_type = "rsync"
+
+    #
     # Set of module paths relative to the Vagrantfile directory
-    # 
+    #
+
     # These paths are added to the DSC configuration running
     # environment to enable local modules to be addresses
-    dsc.module_path = [$DSC_MODULES_DIR]
+    # dsc.module_path = [DSC_MODULES_DIR]
 
     # Path to the directory containing the root configuration manifest file
     # Defaults to 'manifests'
-    dsc.manifests_path = [$DSC_MANIFESTS_DIR]
+    dsc.manifests_path = DSC_MANIFESTS_DIR
 
     # Path relative to the manifests path containing the configuration file
     dsc.configuration_file = "MyWebsite.ps1"
 
     # Path relative to the configuration data file
-    dsc.configuration_data_file = $DSC_MANIFESTS_DIR + "MyConfig.psd1"
+    dsc.configuration_data_file = DSC_MANIFESTS_DIR + "MyConfig.psd1"
 
     # The configuration command to run
     # Assumed to be the same as the configuration file sans extension if missing
     dsc.configuration_name = "MyWebsite"
 
     # Path to the directory containing a pre-generated MOF file
+    # Uncomment to use a pre-compiled MOF file
     # dsc.mof_path = $MOF_DIR
     
     # Commandline arguments for the configuration command
