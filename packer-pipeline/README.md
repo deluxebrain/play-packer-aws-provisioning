@@ -45,3 +45,38 @@ This is not yet available via the usual packer plugin distribution model.
 packer build -force -only devbox-vbox packer-vbox.json &> packer.log
 ```
 
+## Vagrant
+
+1. Managing Vagrant boxes
+
+  ```shell
+  vagrant box list
+  vagrant box remove <name>
+  vagrant box add <name> <path>
+  ```
+
+2. Firing up boxes
+
+  ```shell
+  cd <path_to_vagrant_file>
+  vagrant up --debug &> vagrant.log
+  ```
+
+3. Running just provisioning
+
+  ```shell
+  cd <path_to_vagrant_file>
+  vagrant provision --provision-with dsc
+  ```
+
+4. Plugin management
+
+  ```shell
+  vagrant plugin list
+  vagrant plugin show <name>
+  vagrant plugin remove <name>
+  vagrant plugin install <name>
+  vagrant plugin install <path>
+  ```
+
+
