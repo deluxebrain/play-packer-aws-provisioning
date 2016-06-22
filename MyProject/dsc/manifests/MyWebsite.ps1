@@ -15,8 +15,9 @@ Configuration MyWebsite
     [string]$HostName = "MyWebsite.example.${HostNameSuffix}"
   )
 
-  Import-DscResource -Module xWebAdministration
-  Import-DscResource -Module xNetworking
+  Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
+  Import-DscResource -Module 'xWebAdministration'
+  Import-DscResource -Module 'xNetworking'
 
   Write-Host "MyWebsite DSC Config :: MachineName=$MachineName, WebAppName=$WebAppName"
   
@@ -36,15 +37,14 @@ Configuration MyWebsite
 
       xFirewall webFirewall
       {
+        Ensure = "Present"
         Name = "WebFirewallOpen"
         Direction = "Inbound"
         LocalPort = "80"
         Protocol = "TCP"
         Action = "Allow"
-        Ensure = "Present"
       }
 
-      # Stop the default site
       xWebsite DefaultSite
       {
         Ensure = "Absent"
@@ -62,7 +62,7 @@ Configuration MyWebsite
         Type = "Directory"
       }
 
-      xWebAppPool
+      xWebAppPool MyWebsite
       {
         Ensure = "Present"
         Name = $AppPoolName
@@ -77,8 +77,6 @@ Configuration MyWebsite
         ApplicationPool = $AppPoolName
         PhysicalPath = $WebAppPath
         State = "Started"
-        LogPeriod = "Hourly"
-        LogFormat = "W3C"
         BindingInfo = @(
           MSFT_xWebBindingInformation
           {
@@ -86,14 +84,14 @@ Configuration MyWebsite
             Port = 80
             HostName = $HostName
             IPAddress = "*"
-          }),
-        AuthenticationInformation = @(
-          MSFT_xWebAuthenticationInformation
-          {
+          })
+        AuthenticationInfo = MSFT_xWebAuthenticationInformation
+        {
             Anonymous = $true
             Basic = $false
             Digest = $false
             Windows = $false
-          })
+        }
+    }
   }
 }

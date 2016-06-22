@@ -90,6 +90,45 @@
           "2"
         ]
       ]
+    },
+    {
+      "type": "virtualbox-ovf",
+      "name": "appbox-vbox",
+      "vm_name": "{{user `app_name`}}-{{user `build_version`}}",
+      "output_directory": "{{user `images_directory`}}vbox/{{user `app_name`}}-{{user `build_version`}}/appbox-vbox/",
+      "communicator": "winrm",
+      "source_path": "{{user `images_directory`}}vbox/{{user `app_name`}}-{{user `build_version`}}/devbox-vbox/{{user `app_name`}}-{{user `build_version`}}.ovf",
+      "headless": false,
+      "guest_additions_mode": "disable",
+      "boot_wait": "30s",
+      "winrm_username": "vagrant",
+      "winrm_password": "FooBarBaz",
+      "winrm_timeout": "5m",
+      "winrm_port":5985,
+      "winrm_host":"localhost",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_timeout": "10m",
+      "http_directory":"/tmp",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "2048"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "64"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ]
     }
   ],
   "provisioners": [
@@ -171,6 +210,24 @@
         "./scripts/cleanup2.ps1"
       ],
       "only":["devbox-vbox"]
+    },
+    {
+      "type": "dsc",
+      "configuration_name": "MyWebsite",
+      "configuration_file": "../MyProject/dsc/manifests/MyConfig.psd1",
+      "manifest_file": "../MyProject/dsc/manifests/MyWebsite.ps1",
+      "working_dir": "c:\\tmp\\packer",
+      "staging_dir": "c:\\tmp\\packer\\stage",
+      "install_package_management": true,
+      "install_modules": {
+        "xWebAdministration": "1.11.0.0",
+        "xNetworking": "2.9.0.0"
+      },
+      "configuration_params": {
+        "-MachineName": "localhost",
+        "-SourcePath": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/MyWebsite"
+      },
+      "only":["appbox-vbox"]
     }
   ],
   "post-processors": [

@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-packer build -force -only devbox-vbox packer-vbox.json
