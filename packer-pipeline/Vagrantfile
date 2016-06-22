@@ -17,7 +17,7 @@ IP_ADDRESS = "10.0.0.30"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "sample-app-1.0.0"
+  config.vm.box = "sample-app-appbox"
   config.vm.guest = :windows
   config.vm.communicator = "winrm"
 

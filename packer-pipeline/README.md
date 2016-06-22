@@ -42,7 +42,16 @@ This is not yet available via the usual packer plugin distribution model.
 ## Running a build
 
 ```shell
-packer build -force -only devbox-vbox packer-vbox.json &> packer.log
+packer build -force -only devbox-vbox packer-vbox.json &> packer.log &
+mt -cS log packer.log
+```
+
+Note this can take a long time - if you need to quit out (e.g. if its failing) hit ctrl-c. However, this will leave behind some mess that will prevent future builds working.
+
+To fix:
+
+```shell
+rm -rf ~/VirtualBox/VMs/<name>/*
 ```
 
 ## Vagrant

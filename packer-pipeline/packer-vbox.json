@@ -212,12 +212,25 @@
       "only":["devbox-vbox"]
     },
     {
+      "type":"powershell",
+      "inline": [
+        "md c:\\tmp\\deploy"
+      ],
+      "only":["appbox-vbox"]
+    },
+    {
+      "type": "file",
+      "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/deploy",
+      "destination": "c:\\tmp\\deploy",
+      "only":["appbox-vbox"]
+    },
+    {
       "type": "dsc",
       "configuration_name": "MyWebsite",
       "configuration_file": "../MyProject/dsc/manifests/MyConfig.psd1",
       "manifest_file": "../MyProject/dsc/manifests/MyWebsite.ps1",
       "working_dir": "c:\\tmp\\packer",
-      "staging_dir": "c:\\tmp\\packer\\stage",
+      "staging_dir": "c:\\tmp\\packer\\staging",
       "install_package_management": true,
       "install_modules": {
         "xWebAdministration": "1.11.0.0",
@@ -225,7 +238,7 @@
       },
       "configuration_params": {
         "-MachineName": "localhost",
-        "-SourcePath": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/MyWebsite"
+        "-SourcePath": "c:\\tmp\\deploy\\MyWebsite"
       },
       "only":["appbox-vbox"]
     }
