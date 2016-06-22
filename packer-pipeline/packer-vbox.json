@@ -235,9 +235,17 @@
       "type": "vagrant",
       "compression_level":1,
       "keep_input_artifact": true,
-      "output": "{{user `images_directory`}}vagrant/{{user `app_name`}}-{{user `build_version`}}/{{user `app_name`}}-{{.Provider}}-{{user `build_version`}}.box",
+      "output": "{{user `images_directory`}}vagrant/{{user `app_name`}}-{{user `build_version`}}/devbox-vbox/{{user `app_name`}}-{{user `build_version`}}.box",
       "vagrantfile_template": "vagrantfile-windows_2012_r2.template",
       "only":["devbox-vbox"]
+    },
+    {
+      "type": "vagrant",
+      "compression_level":1,
+      "keep_input_artifact": true,
+      "output": "{{user `images_directory`}}vagrant/{{user `app_name`}}-{{user `build_version`}}/appbox-vbox/{{user `app_name`}}-{{user `build_version`}}.box",
+      "vagrantfile_template": "vagrantfile-windows_2012_r2.template",
+      "only":["appbox-vbox"]
     }
   ]
 }
