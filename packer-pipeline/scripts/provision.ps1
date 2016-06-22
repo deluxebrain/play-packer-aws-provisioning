@@ -8,7 +8,7 @@ choco install 7zip -y
 # Disable Windows Updates
 cmd /c reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 1 /f
 
-tzutil /s "AUS Eastern Standard Time"
+tzutil /s "UTC"
 
 Install-WindowsFeature Web-Server
 Install-WindowsFeature Web-Mgmt-Tools

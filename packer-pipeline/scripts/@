@@ -1,5 +1,0 @@
-# Install NuGet
-Get-PackageProvider -Name Nuget -ForceBootstrap
-
-# Install Microsoft PowerShell Gallery
-Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
