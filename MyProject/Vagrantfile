@@ -9,15 +9,15 @@ VAGRANTFILE_API_VERSION = "2"
 WINRM_HOST_PORT = 5895
 WINRM_PASSWORD = "FooBarBaz"
 
-# Absolute paths for directories on the host running in the context of the guest
-PROJ_DIR = "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/"
-APP_SOURCE_DIR = PROJ_DIR + "MyWebsite/"
+# Path to deploy artefacts
+PROJ_DIR = "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/deploy"
 
 # Relative paths for directories relating to DSC configuration
 # Paths are relative to the VagrantFile containing directory
 DSC_MODULES_DIR = "dsc/modules/"
 DSC_MANIFESTS_DIR = "dsc/manifests/"
 DSC_MOF_DIR = "dsc/mof/"
+DSC_CONFIG_NAME = "MyWebsite"
 
 # Host setup
 HOSTNAME = "webserver01"
@@ -27,8 +27,9 @@ IP_ADDRESS = "10.0.0.30"
 # Guest paths
 GUEST_PROJ_DIR = "c:\\vagrant\\"
 GUEST_MOF_DIR = GUEST_PROJ_DIR + "DSC\\MOF\\"
+GUEST_DEPLOY_DIR = "c:\\inetput\\wwwroot\\"
 
-# Script to Load DSC Module Dependencies
+# Load DSC Module Dependencies
 # - Installs Third-Party modules via PowerShellGet
 # - Installs the Project's Custom DSC Modules
 $dscModDepScript = <<SCRIPT
@@ -41,10 +42,21 @@ $dscModDepScript = <<SCRIPT
     Get-DscResource
 SCRIPT
 
+# Create MOF folder and set it as current location 
+$dscSetupMOF = <<SCRIPT
+  if (Test-Path($Args[0]))
+  {
+    Remove-Item $Args[0] -Recurse -Force
+  }
+  
+  New-Item -ItemType directory -Path $Args[0] | Out-Null
+  Set-Location $Args[0] | Out-Null
+SCRIPT
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "sample-app-1.0.0"
+  config.vm.box = "sample-app-devbox"
   config.vm.guest = :windows
   config.vm.communicator = "winrm"
 
@@ -91,15 +103,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   config.hostmanager.aliases = %w(example-box.localdomain example-box-alias)
   # end
   
+  # Setup MOF directory
+  config.vm.provision "shell" do |s|
+    s.inline = $dscSetupMOF
+    s.args = [GUEST_MOF_DIR]
+  end
+  
   # Initialize DSC Configuration and Generate MOF file
   config.vm.provision "shell" do |s|
     s.path = "dsc/manifests/MyWebsite.ps1"
-    s.args = ["localhost", APP_SOURCE_DIR, HOSTNAME]
+    s.args = [
+      "localhost",
+      "c:\\tmp\\deploy",
+      "MyWebsite",
+      "c:\\inetput\\wwwroot\\MyWebsite",
+      "MyWebsite",
+      "com",
+      HOSTNAME] 
   end
 
   # Apply DSC Configuration
   config.vm.provision "shell" do |s|
     s.inline = "Start-DSCConfiguration -Path $Args[0] -Force -Wait -Verbose -Debug"
-    s.args = [GUEST_MOF_DIR + "MySite\\"]
+    s.args = [GUEST_MOF_DIR + DSC_CONFIG_NAME]
   end
 end

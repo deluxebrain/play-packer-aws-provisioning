@@ -2,7 +2,7 @@
   "variables": {
     "images_directory": "/var/media/images/",
     "app_name": "sample-app",
-    "build_version": "1.0.0"
+    "build_version": "1.0.1"
   },
   "builders": [
     {

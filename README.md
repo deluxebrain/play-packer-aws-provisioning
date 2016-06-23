@@ -9,6 +9,88 @@ Using Packer to provision Windows servers in AWS
 4. [Tutorial series](http://www.onegeek.com.au/articles/machine-factories-part1-vagrant) going through provisioning via Virtualbox through to AWS
 5. [Vagrant-DSC plugin](https://github.com/mefellows/vagrant-dsc)
 
+## Setting up Packer to build AWS images
+
+1. Create IAM policy setting up the required permissions
+
+The [folling IAM policy](https://www.packer.io/docs/builders/amazon.html) is correct at time of writing:
+
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+    {
+      "Effect": "Allow",
+      Action": [
+        "ec2:AttachVolume",
+        "ec2:CreateVolume",
+        "ec2:DeleteVolume",
+        "ec2:CreateKeypair",
+        "ec2:DeleteKeypair",
+        "ec2:DescribeSubnets",
+        "ec2:CreateSecurityGroup",
+        "ec2:DeleteSecurityGroup",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:CreateImage",
+        "ec2:CopyImage",
+        "ec2:RunInstances",
+        "ec2:TerminateInstances",
+        "ec2:StopInstances",
+        "ec2:DescribeVolumes",
+        "ec2:DetachVolume",
+        "ec2:DescribeInstances",
+        "ec2:CreateSnapshot",
+        "ec2:DeleteSnapshot",
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeImages",
+        "ec2:RegisterImage",
+        "ec2:CreateTags",
+        "ec2:ModifyImageAttribute"
+      ],
+      "Resource": "*"
+    }]
+  }
+  ```
+
+2. Create AWS IAM user and attach the policy created in step 1
+
+  E.g. ```agent-packer```
+
+3. Setup AWS dotfiles
+
+  Create an ```~/.aws/``` directory and setup the default config and credentials
+
+  **~/.aws/config**
+  ```shell
+  [default]
+  region=eu-west-1
+  output=json
+  ```
+
+4. Setup AWS credentials for the packer build pipeline to use
+
+  Packer [looks for credentials](https://www.packer.io/docs/builders/amazon.html) in the following locations:
+
+  - Hard-coded in the packer template
+  - Variables in the packer template (including those resolved from command-line arguments)
+  - The following environment variables
+    - First ```AWS_ACCESS_KEY_ID``` then ```AWS_ACCESS_KEY```
+    - First ```AWS_SECRET_ACCESS_KEY``` then ```AWS_SECRET_KEY```
+  - Local AWS configuration files
+    - First ```~/.aws/credentials```
+    - Then based on ```AWS_PROFILE```
+
+  e.g.
+
+  **~/.aws/credentials
+  ```shell
+  [default]
+  aws_access_key_id=
+  aws_secret_access_key=
+  ```
+
+  NOTE I usually put the credentials in a shell script that defines then as environment variables. I then source this file as part of running the packer pipeline.
+
 ## PowerShell DSC
 
 Packer is used to build up role specific boxes (via a build chain back to common *base* builds). These are then configurated per application using *PowerShell DSC*. 
