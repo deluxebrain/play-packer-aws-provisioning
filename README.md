@@ -13,7 +13,7 @@ Using Packer to provision Windows servers in AWS
 
 1. Create IAM policy setting up the required permissions
 
-The [folling IAM policy](https://www.packer.io/docs/builders/amazon.html) is correct at time of writing:
+  The [folling IAM policy](https://www.packer.io/docs/builders/amazon.html) is correct at time of writing:
 
   ```json
   {
