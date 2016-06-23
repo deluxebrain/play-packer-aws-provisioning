@@ -80,7 +80,7 @@ Using Packer to provision Windows servers in AWS
     - First ```~/.aws/credentials```
     - Then based on ```AWS_PROFILE```
 
-  e.g.
+  e.g. to use the default credentials:
 
   **~/.aws/credentials
   ```shell
@@ -89,7 +89,16 @@ Using Packer to provision Windows servers in AWS
   aws_secret_access_key=
   ```
 
-  NOTE I usually put the credentials in a shell script that defines then as environment variables. I then source this file as part of running the packer pipeline.
+  e.g. to use named credentials:
+
+  **~/.aws/credentials
+  ```shell
+  [foo]
+  aws_access_key_id=
+  aws_secret_access_key=
+  ```
+
+  ```export AWS_PROFILE=foo```
 
 ## PowerShell DSC
 
