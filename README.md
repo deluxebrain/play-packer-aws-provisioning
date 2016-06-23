@@ -58,6 +58,12 @@ Using Packer to provision Windows servers in AWS
   "ec2:GetPasswordData"
   ```
 
+  If the build fails packer automatically registers the AMI. To allow this, add in the following:
+
+  ```json
+  "ec2:DeregisterImage"
+  ```
+
 2. Create AWS IAM user and attach the policy created in step 1
 
   E.g. ```agent-packer```

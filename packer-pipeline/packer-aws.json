@@ -59,6 +59,15 @@
     {
       "type": "powershell",
       "scripts": [
+        "./scripts/common/provision-powershell.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
         "./scripts/aws/ec2-config.ps1"
       ]
     },
@@ -72,6 +81,18 @@
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/aws/DriveLetterConfig.xml",
       "destination": "C:\\tmp\\deploy"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/common/provision.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/common/provision-dsc.ps1"
+      ]
     }
   ]
 }
