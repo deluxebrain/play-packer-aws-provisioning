@@ -1,0 +1,6 @@
+export AWS_PROFILE="agent-build"
+
+export BUILD_INSTANCE_NAME="packer-$(date +%s)"
+export BUILD_VPC_ID="vpc-76032f13"
+export BUILD_SUBNET_ID="subnet-76b48a01"
+

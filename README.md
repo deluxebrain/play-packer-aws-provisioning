@@ -21,7 +21,7 @@ Using Packer to provision Windows servers in AWS
     "Statement": [
     {
       "Effect": "Allow",
-      Action": [
+      "Action": [
         "ec2:AttachVolume",
         "ec2:CreateVolume",
         "ec2:DeleteVolume",
@@ -50,6 +50,12 @@ Using Packer to provision Windows servers in AWS
       "Resource": "*"
     }]
   }
+  ```
+
+  Add in the followig if you are using auto-generated passwords ( i.e. not specifying the ```winrm_password``` ):
+
+  ```json
+  "ec2:GetPasswordData"
   ```
 
 2. Create AWS IAM user and attach the policy created in step 1

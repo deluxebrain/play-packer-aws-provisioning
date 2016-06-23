@@ -1,0 +1,77 @@
+{
+  "variables": {
+    "build_version": "1.0.0",
+    "source_ami": "",
+    "instance_type": "",
+    "instance_name": "{{env `BUILD_INSTANCE_NAME`}}",
+    "vpc_id": "{{env `BUILD_VPC_ID`}}",
+    "subnet_id": "{{env `BUILD_SUBNET_ID`}}",
+    "region": "eu-west-1",
+    "ami_name": "",
+    "ami_description": ""
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "name": "base-ami",
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_port": 5985,
+      "winrm_timeout": "30m",
+      "winrm_use_ssl": false,
+      "winrm_insecure": true,
+      "ami_name": "base-{{user `build_version`}}",
+      "ami_description": "{{user `ami_description`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "instance_type": "{{user `instance_type`}}",
+      "region": "{{user `region`}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "security_group_ids": [
+        "sg-3747d450"
+      ],
+      "user_data_file": "./scripts/aws/user-data",
+      "associate_public_ip_address": true,
+      "ssh_private_ip": false,
+      "force_deregister": true,
+      "ami_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "encrypted": true,
+          "volume_size": 80,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        },
+        {
+          "device_name": "xvdf",
+          "encrypted": true,
+          "volume_size": 20,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "run_tags": {
+          "Name": "{{user `instance_name`}}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/aws/ec2-config.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "md c:\\tmp\\deploy"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/aws/DriveLetterConfig.xml",
+      "destination": "C:\\tmp\\deploy"
+    }
+  ]
+}

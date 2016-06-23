@@ -1,0 +1,6 @@
+{
+  "source_ami": "ami-50e67823",
+  "instance_type": "t2.small",
+  "ami_name": "BaseWindowsBuild",
+  "ami_description": "Base Windows build"
+}

@@ -4,7 +4,7 @@ write-host "(host) Running User Data Script"
 
 # TODO: User should replace password here with something random. Even better, implement over SSL: https://github.com/packer-community/packer-windows-plugins/issues/30
 # Also note, this user should be removed in Cfn Init
-cmd.exe /c net user /add vagrant FooBar@123
+cmd.exe /c net user /add vagrant FooBarBaz
 cmd.exe /c net localgroup administrators vagrant /add
 
 Set-ExecutionPolicy -ExecutionPolicy bypass -Force

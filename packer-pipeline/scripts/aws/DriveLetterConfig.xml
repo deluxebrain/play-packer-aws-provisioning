@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="yes"?>
+<DriveLetterMapping>
+  <Mapping>
+    <VolumeName>/dev/sda1</VolumeName>
+    <DriveLetter>C</DriveLetter>
+  </Mapping>
+  <Mapping>
+    <VolumeName>xvdf</VolumeName>
+    <DriveLetter>D</DriveLetter>
+  </Mapping>
+</DriveLetterMapping>
+
