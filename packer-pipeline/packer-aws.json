@@ -73,7 +73,7 @@
     {
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/aws/DriveLetterConfig.xml",
-      "destination": "C:\\tmp\\deploy\\ops\\"
+      "destination": "C:\\tmp\\deploy\\ops\\DriveLetterConfig.xml"
     },
     {
       "type": "file",
@@ -96,6 +96,12 @@
         "-MachineName": "localhost",
         "-SourcePath": "c:\\tmp\\deploy\\app\\MyWebsite"
       }
+    },
+    {
+      "type": "windows-shell",
+      "scripts": [
+        "./scripts/aws/provision-admin-account.cmd"
+      ]
     },
     {
       "type": "powershell",
