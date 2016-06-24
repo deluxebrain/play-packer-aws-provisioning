@@ -52,17 +52,23 @@ Using Packer to provision Windows servers in AWS
   }
   ```
 
-  Add in the followig if you are using auto-generated passwords ( i.e. not specifying the ```winrm_password``` ):
+  - Add in the following if you are using auto-generated passwords ( i.e. not specifying the ```winrm_password``` ):
 
-  ```json
-  "ec2:GetPasswordData"
-  ```
+    ```json
+    "ec2:GetPasswordData"
+    ```
 
-  If the build fails packer automatically registers the AMI. To allow this, add in the following:
+  - If the build fails packer automatically registers the AMI. To allow this, add in the following:
 
-  ```json
-  "ec2:DeregisterImage"
-  ```
+    ```json
+    "ec2:DeregisterImage"
+    ```
+  
+  - Add in the following to allow the user to access the ec2 instance console log:
+
+    ```json
+    "ec2:GetConsoleOutput"
+    ```
 
 2. Create AWS IAM user and attach the policy created in step 1
 

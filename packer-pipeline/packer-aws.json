@@ -59,39 +59,48 @@
     {
       "type": "powershell",
       "scripts": [
-        "./scripts/common/provision-powershell.ps1"
-      ]
-    },
-    {
-      "type": "windows-restart"
-    },
-    {
-      "type": "powershell",
-      "scripts": [
-        "./scripts/aws/ec2-config.ps1"
+        "./scripts/common/provision-core.ps1"
       ]
     },
     {
       "type": "powershell",
       "inline": [
-        "md c:\\tmp\\deploy"
+        "md c:\\tmp\\deploy\\ops",
+        "md c:\\tmp\\deploy\\app",
+        "md c:\\tmp\\packer"
       ]
     },
     {
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/aws/DriveLetterConfig.xml",
-      "destination": "C:\\tmp\\deploy"
+      "destination": "C:\\tmp\\deploy\\ops\\"
+    },
+    {
+      "type": "file",
+      "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/deploy",
+      "destination": "C:\\tmp\\deploy\\app"
+    },
+    {
+      "type": "dsc",
+      "configuration_name": "MyWebsite",
+      "configuration_file": "../MyProject/dsc/manifests/MyConfig.psd1",
+      "manifest_file": "../MyProject/dsc/manifests/MyWebsite.ps1",
+      "working_dir": "c:\\tmp\\packer",
+      "staging_dir": "c:\\tmp\\packer\\staging",
+      "install_package_management": true,
+      "install_modules": {
+        "xWebAdministration": "1.11.0.0",
+        "xNetworking": "2.9.0.0"
+      },
+      "configuration_params": {
+        "-MachineName": "localhost",
+        "-SourcePath": "c:\\tmp\\deploy\\app\\MyWebsite"
+      }
     },
     {
       "type": "powershell",
       "scripts": [
-        "./scripts/common/provision.ps1"
-      ]
-    },
-    {
-      "type": "powershell",
-      "scripts": [
-        "./scripts/common/provision-dsc.ps1"
+        "./scripts/aws/ec2-config.ps1"
       ]
     }
   ]

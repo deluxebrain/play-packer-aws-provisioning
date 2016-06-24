@@ -18,3 +18,6 @@ tzutil /s "UTC"
 # choco install 7zip -y
 # choco install -y 7zip.commandline
 
+choco install dotnet4.5 -y
+choco install powershell4 -y
+

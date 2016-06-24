@@ -28,5 +28,10 @@ foreach ($element in $xmlElementToModify.Plugin)
         # Sets drive letters of the mounted volumes based on DriveLetterConfig.xml
         $element.State="Enabled"
     }
+    elseif ($element.name -eq "Ec2DynamicBootVolumeSize")
+    {
+        # Expand boot volume to include any unpartitioned space
+        $element.State="Enabled"
+    }
 }
 $xml.Save($EC2SettingsFile)

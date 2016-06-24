@@ -214,14 +214,15 @@
     {
       "type":"powershell",
       "inline": [
-        "md c:\\tmp\\deploy"
+        "md c:\\tmp\\deploy\\app",
+        "md c:\\tmp\\packer"
       ],
       "only":["appbox-vbox"]
     },
     {
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/deploy",
-      "destination": "c:\\tmp\\deploy",
+      "destination": "c:\\tmp\\deploy\\app",
       "only":["appbox-vbox"]
     },
     {
@@ -238,7 +239,7 @@
       },
       "configuration_params": {
         "-MachineName": "localhost",
-        "-SourcePath": "c:\\tmp\\deploy\\MyWebsite"
+        "-SourcePath": "c:\\tmp\\deploy\\app\\MyWebsite"
       },
       "only":["appbox-vbox"]
     }

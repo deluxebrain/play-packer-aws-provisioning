@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source ~/.secrets/packer/play; \
+packer build -var-file template-base-ami.json packer-aws.json > packer.log
+
+mt -cS log packer.log
+
