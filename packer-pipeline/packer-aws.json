@@ -1,6 +1,6 @@
 {
   "variables": {
-    "build_version": "1.0.0",
+    "build_version": "{{env `BUILD_VERSION`}}",
     "source_ami": "",
     "instance_type": "",
     "instance_name": "{{env `BUILD_INSTANCE_NAME`}}",
@@ -64,10 +64,17 @@
     },
     {
       "type": "powershell",
+      "scripts": [
+        "./scripts/common/provision-users.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
       "inline": [
         "md c:\\tmp\\deploy\\ops",
         "md c:\\tmp\\deploy\\app",
-        "md c:\\tmp\\packer"
+        "md c:\\tmp\\packer",
+        "md c:\\tmp\\boxstarter"
       ]
     },
     {
@@ -79,6 +86,17 @@
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/deploy",
       "destination": "C:\\tmp\\deploy\\app"
+    },
+    {
+      "type": "file",
+      "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/common/boxstarter.ps1",
+      "destination": "C:\\tmp\\boxstarter\\boxstarter.ps1"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/common/provision-boxstarter.ps1"
+      ]
     },
     {
       "type": "dsc",
@@ -98,15 +116,9 @@
       }
     },
     {
-      "type": "windows-shell",
-      "scripts": [
-        "./scripts/aws/provision-admin-account.cmd"
-      ]
-    },
-    {
       "type": "powershell",
       "scripts": [
-        "./scripts/aws/ec2-config.ps1"
+        "./scripts/aws/ec2-config-ami.ps1"
       ]
     }
   ]

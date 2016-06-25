@@ -6,11 +6,12 @@ write-host "(host) Running User Data Script"
 write-output "Setting TZ"
 cmd.exe /c tzutil /s \"UTC\"
 
+# Powershell execution setup
 Set-ExecutionPolicy Unrestricted
+Enable-PSRemoting -Force -SkipNetworkProfileCheck
 
 # RDP
 write-output "Setting up RDP"
-
 cmd.exe /c netsh advfirewall firewall add rule name="Open Port 3389" dir=in action=allow protocol=TCP localport=3389
 cmd.exe /c reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
 

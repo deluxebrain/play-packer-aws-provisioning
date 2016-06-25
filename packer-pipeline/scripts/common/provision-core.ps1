@@ -14,10 +14,14 @@ tzutil /s "UTC"
 # Install-WindowsFeature Web-Mgmt-Tools
 # Install-WindowsFeature Web-App-Dev -IncludeAllSubFeature
 
-# Make sure 7za is installed
-# choco install 7zip -y
-# choco install -y 7zip.commandline
+# Boxstarter
+choco install Boxstarter -y
 
+# Make sure 7za is installed
+choco install 7zip -y
+choco install -y 7zip.commandline
+
+# Core OS
 choco install dotnet4.5 -y
 choco install powershell4 -y
 

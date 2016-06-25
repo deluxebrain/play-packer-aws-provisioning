@@ -1,25 +1,3 @@
-(iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')))>$null 2>&1
-choco install 7zip -y
-
-# Deprecated - part of Powershell and Windows Management Framework
-# choco install seek-dsc -y
-# choco install powershell -y
-
-# Disable Windows Updates
-cmd /c reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 1 /f
-
-tzutil /s "UTC"
-
-Install-WindowsFeature Web-Server
-Install-WindowsFeature Web-Mgmt-Tools
-Install-WindowsFeature Web-App-Dev -IncludeAllSubFeature
-
-# Install Mongo. Issues with `choco install mongo`
-# https://gist.github.com/tekmaven/041a205276bf4d26e8f9
-
-# Make sure 7za is installed
-choco install -y 7zip.commandline
-
 # Create mongodb and data directory
 md $env:temp\mongo\data
 
