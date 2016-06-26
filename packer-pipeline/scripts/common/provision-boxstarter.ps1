@@ -4,8 +4,8 @@
 Import-Module Boxstarter.Chocolatey
 Import-Module "$($Boxstarter.BaseDir)\Boxstarter.Common\boxstarter.common.psd1"
 
-$secpasswd = ConvertTo-SecureString "FooBar123!@$" -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential ("packer", $secpasswd)
+$secpasswd = ConvertTo-SecureString "$env:BUILD_USER_PASSWORD" -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential ("$env:BUILD_USER", $secpasswd)
 
 Write-Host "Creating Boxstarter task to wrap package install"
 try

@@ -8,7 +8,10 @@
     "subnet_id": "{{env `BUILD_SUBNET_ID`}}",
     "region": "eu-west-1",
     "ami_name": "",
-    "ami_description": ""
+    "ami_description": "",
+    "build_user": "{{env `BUILD_TEMP_USER`}}",
+    "build_user_password": "{{env `BUILD_TEMP_USER_PASSWORD`}}",
+    "admin_password": "{{env `BUILD_ADMIN_PASSWORD`}}"
   },
   "builders": [
     {
@@ -64,8 +67,10 @@
     },
     {
       "type": "powershell",
-      "scripts": [
-        "./scripts/common/provision-users.ps1"
+      "script": "./scripts/common/provision-build-user.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}",
+        "BUILD_USER_PASSWORD={{user `build_user_password`}}"
       ]
     },
     {
@@ -94,8 +99,10 @@
     },
     {
       "type": "powershell",
-      "scripts": [
-        "./scripts/common/provision-boxstarter.ps1"
+      "script": "./scripts/common/provision-boxstarter.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}",
+        "BUILD_USER_PASSWORD={{user `build_user_password`}}"
       ]
     },
     {
@@ -119,6 +126,13 @@
       "type": "powershell",
       "scripts": [
         "./scripts/aws/ec2-config-ami.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/aws/bake-admin-password.ps1",
+      "environment_vars": [
+        "ADMIN_PASSWORD={{user `admin_password`}}"
       ]
     }
   ]
