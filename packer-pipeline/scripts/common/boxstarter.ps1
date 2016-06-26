@@ -6,9 +6,10 @@ Disable-BingSearch
 Enable-RemoteDesktop
 Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar -EnableOpenFileExplorerToQuickAccess -EnableShowRecentFilesInQuickAccess -EnableShowFrequentFoldersInQuickAccess -EnableExpandToOpenFolder
 
+# TODO - not working ...
 # Install Powershell 5
-Write-BoxstarterMessage "Installing Powershell and WMI"
-choco install powershell -y
+# Write-BoxstarterMessage "Installing Powershell and WMI"
+# choco install powershell -y
 
 # Install critical Windows udpates
 Write-BoxstarterMessage "Installing critical Windows updates"
