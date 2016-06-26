@@ -15,4 +15,4 @@ foreach ($element in $xmlElementToModify.Plugin)
 $xml.Save($EC2SettingsFile)
 
 net user Administrator "$env:ADMIN_PASSWORD"
-wmin useraccount where "name='Administrator'" set PasswordExpires=FALSE
+wmic useraccount where "name='Administrator'" set PasswordExpires=FALSE

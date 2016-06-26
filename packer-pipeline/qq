@@ -1,3 +1,0 @@
-#!/bin/sh
-
-multitail -Z red,black,inverse -T -x "%m %u@%h %f (%t) [%l]" -b 8 -m 0 -cT ANSI -n 100 -f -cS log "packer.log"

@@ -134,6 +134,13 @@
       "environment_vars": [
         "ADMIN_PASSWORD={{user `admin_password`}}"
       ]
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/common/remove-build-user.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}"
+      ]
     }
   ]
 }
