@@ -8,35 +8,26 @@ $secpasswd = ConvertTo-SecureString "$env:BUILD_USER_PASSWORD" -AsPlainText -For
 $credential = New-Object System.Management.Automation.PSCredential ("$env:BUILD_USER", $secpasswd)
 
 Write-Host "Creating Boxstarter task to wrap package install"
-try
+$result = Create-BoxstarterTask $credential
+jf ($result.Errors.Length -gt 0)
 {
-  Create-BoxstarterTask $credential
-}
-catch
-{
-  Write-Host "Error occured: $_"
+  Write-Host "Error occured creating Boxstarter task: $_"
   exit 1
 }
 
 Write-Host "Running in Boxstarter packages"
-try
+$result = Install-BoxstarterPackage -Verbose -PackageName c:\\tmp\\boxstarter\\boxstarter.ps1 # -DisableReboots
+if ($result.Errors.Length -gt 0)
 {
-  Install-BoxstarterPackage -Verbose -PackageName c:\\tmp\\boxstarter\\boxstarter.ps1 # -DisableReboots
-}
-catch
-{
-  Write-Host "Error occured: $_"
+  Write-Host "Error occured running in Boxstarter packages: $_"
   exit 1
 }
 
 Write-Host "Removing wrapper task"
-try
-{
-  Remove-BoxstarterTask
-}
-catch
-{
-  Write-Host "Error occured: $_"
+$result = Remove-BoxstarterTask
+if ($result.Errors.Length -gt 0) 
+{ 
+  Write-Host "Error occured removing Boxstarter task - IGNORING: $_"
   # DONT EXIT
 }
 

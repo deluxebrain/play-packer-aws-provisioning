@@ -1,4 +1,27 @@
 # https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/UsingConfig_WinAMI.html
+
+# BundleConfig.xml
+$EC2SettingsFile="C:\\Program Files\\Amazon\\Ec2ConfigService\\Settings\\BundleConfig.xml"
+$xml = [xml](get-content $EC2SettingsFile)
+$xmlElement = $xml.get_DocumentElement()
+$xmlElementToModify = $xmlElement.Plugins
+
+foreach ($element in $xmlElementToModify.Plugin)
+{
+    if ($element.name -eq "AutoSysprep")
+    {
+        # Dont run sysprep
+        $element.State="No"
+    }
+    elseif ($element.name -eq "SetPasswordAfterSysprep")
+    {
+        # Don't mess with the administrator password
+        $element.State="No"
+    }
+}
+$xml.Save($EC2SettingsFile)
+
+# Config.xml
 $EC2SettingsFile="C:\\Program Files\\Amazon\\Ec2ConfigService\\Settings\\Config.xml"
 $xml = [xml](get-content $EC2SettingsFile)
 $xmlElement = $xml.get_DocumentElement()
@@ -9,7 +32,7 @@ foreach ($element in $xmlElementToModify.Plugin)
     if ($element.name -eq "Ec2SetPassword")
     {
         # Dont generate a random password
-        $element.State="False"
+        $element.State="Disabled"
     }
     elseif ($element.name -eq "Ec2SetComputerName")
     {
@@ -19,7 +42,7 @@ foreach ($element in $xmlElementToModify.Plugin)
     elseif ($element.name -eq "Ec2HandleUserData")
     {
         # Prevent subsequent execution of user data
-        $element.State="False"
+        $element.State="Disabled"
     }
     elseif ($element.name -eq "Ec2SetDriveLetter")
     {
