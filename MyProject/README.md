@@ -20,3 +20,14 @@ e.g. for updating the hosts file using *vagrant-hostmanager*.
     usermod -G <admin-group> <user-name>
     ```
 
+## Notes
+
+```shell
+vagrant up --debug  # Provision the machine using the Vagrantfile
+vagrant reload      # Reboot the machine
+vagrant provision --debug --provision-with dsc # Re-provision using just the dsc provisioner
+```shell
+
+
+
+

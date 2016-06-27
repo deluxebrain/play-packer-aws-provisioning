@@ -1,4 +1,7 @@
-# https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/UsingConfig_WinAMI.html
+# DO NOT USE AS PART OF PACKER PIPELINE
+# It appears that packer needs to know the admin password throughout the entire build pipeline
+# I.e. even baking the admin password as the last step will cause the pipeline to fail
+
 $EC2SettingsFile="C:\\Program Files\\Amazon\\Ec2ConfigService\\Settings\\Config.xml"
 $xml = [xml](get-content $EC2SettingsFile)
 $xmlElement = $xml.get_DocumentElement()

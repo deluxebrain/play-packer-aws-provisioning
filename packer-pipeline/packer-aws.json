@@ -10,8 +10,7 @@
     "ami_name": "",
     "ami_description": "",
     "build_user": "{{env `BUILD_TEMP_USER`}}",
-    "build_user_password": "{{env `BUILD_TEMP_USER_PASSWORD`}}",
-    "admin_password": "{{env `BUILD_ADMIN_PASSWORD`}}"
+    "build_user_password": "{{env `BUILD_TEMP_USER_PASSWORD`}}"
   },
   "builders": [
     {
@@ -126,13 +125,6 @@
       "type": "powershell",
       "scripts": [
         "./scripts/aws/ec2-config-ami.ps1"
-      ]
-    },
-    {
-      "type": "powershell",
-      "script": "./scripts/aws/bake-admin-password.ps1",
-      "environment_vars": [
-        "ADMIN_PASSWORD={{user `admin_password`}}"
       ]
     },
     {
