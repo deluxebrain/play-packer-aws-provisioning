@@ -22,8 +22,12 @@ Using Packer to provision Windows servers in AWS
 4. jq
 5. Python and pip 
 6. AWS CLI
+7. Graphviz (used with Terraform to show the terraform plan as a visualized graph)
+8. csvkit (used to generate AWS policies for terraform)
 
 ## Setting up Packer to build AWS images
+
+NOTE you'll also need to add in policies for ```Terraform```. See ```./terraform``` directory.
 
 1. Create IAM policy setting up the required permissions
 

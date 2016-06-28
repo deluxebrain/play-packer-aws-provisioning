@@ -1,0 +1,23 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Resource": "*",
+      "Action": [
+        "autoscaling:UpdateAutoScalingGroup",
+        "ec2:ModifyInstanceAttribute",
+        "ec2:ModifyNetworkInterfaceAttribute",
+        "ec2:ModifySubnetAttributes",
+        "ec2:ModifyVpcAttribute",
+        "ec2:ModifyVpcEndpoint",
+        "ec2:ReplaceNetworkAclAssociation",
+        "ec2:ReplaceRouteTableAssociation",
+        "elasticloadbalancing:ModifyLoadBalancerAttributes",
+        "route53:ChangeResourceRecordSets",
+        "route53:ChangeTagsForResource",
+        "route53:UpdateHealthCheck"
+      ]
+    }
+  ]
+}

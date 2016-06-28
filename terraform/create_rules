@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+function create_policy()
+{
+  local action="$1"
+
+  # jq
+  # Use jq -s to slurp two files into an array
+  # [0] is the first file
+  # [1] is the second file
+  # We then add the second array item into the first giving an array that looks a bit like this;
+  # 1
+  #   2
+  # 2
+  # We can then pull out what we need ( the first item in the array ) using:
+  # | .[0]
+
+  # csvkit
+  # csvgrep - grab all rows where column 3 matches pattern
+  # csvcut - grab column 4
+  # csvjson - form array in form [{"PolicyRule Required", "<rule>", ...}]
+  # Pipe to jq to select "PolicyRule Required" value for each item in array"
+  # Note we are using {Action: [ ... ]} to package into named array
+  jq -s '.[0].Statement[0]  += .[1] | .[0]' \
+    policy_template.json \
+    <( \
+      csvgrep -c 3 -r "^${action}" policies.csv | \
+      csvcut -c 4 | \
+      sort -u  | \
+      csvjson \
+      | jq '{Action: [.[] | .["PolicyRule Required"]]}')
+}
+
+# Pipe to pbcopy so its available to paste into AWS console
+# Save locally as well to a json file
+create_policy "$1" | tee >(pbcopy)  >> "terraform_policy_$1.json"
+

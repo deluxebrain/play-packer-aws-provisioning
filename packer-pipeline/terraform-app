@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# shellcheck source=/dev/null
+source ~/.secrets/packer/play
+
+AMI_ID="$(aws ec2 describe-images --filters "Name=name, Values=app-${BUILD_VERSION}" | jq .Images[0].ImageId | tr -d '"')"
+
+echo "Building from ${AMI_ID}"
+
+# scans the current directory for the configuration (file ending in .tf)
+# apply
+# destroy
+terraform "$1" \
+        -var aws_profile=agent-build \
+        -var vpc_id="$BUILD_VPC_ID" \
+        -var subnet_eu_west_1a="$DEPLOY_SUBNET_EU_WEST_1A" \
+        -var subnet_eu_west_1b="$DEPLOY_SUBNET_EU_WEST_1B" \
+        -var ami_id="$AMI_ID"
