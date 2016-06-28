@@ -3,10 +3,12 @@ export AWS_PROFILE=""
 
 export BUILD_VERSION="1.0.0"
 
-# AWS VPC and instance settings
-export BUILD_INSTANCE_NAME="build-$(date +%s)"
+# AWS VPC settings
 export BUILD_VPC_ID=""
 export BUILD_SUBNET_ID=""
+
+# AWS ami and instance settings
+export BUILD_INSTANCE_NAME="build-$(date +%s)"
 
 # Temporary account to use when running the shell under elevated access
 export BUILD_TEMP_USER="packer"

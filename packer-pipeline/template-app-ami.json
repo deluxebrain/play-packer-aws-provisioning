@@ -1,4 +1,3 @@
 {
-  "source_ami": "ami-50e67823",
   "instance_type": "t2.small"
 }

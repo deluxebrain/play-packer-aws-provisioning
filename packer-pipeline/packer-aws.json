@@ -23,7 +23,34 @@
       "winrm_use_ssl": false,
       "winrm_insecure": true,
       "ami_name": "base-{{user `build_version`}}",
-      "ami_description": "{{user `ami_description`}}",
+      "ami_description": "Base server",
+      "source_ami": "{{user `source_ami`}}",
+      "instance_type": "{{user `instance_type`}}",
+      "region": "{{user `region`}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "security_group_ids": [
+        "sg-3747d450"
+      ],
+      "user_data_file": "./scripts/aws/user-data",
+      "associate_public_ip_address": true,
+      "ssh_private_ip": false,
+      "force_deregister": true,
+      "run_tags": {
+          "Name": "{{user `instance_name`}}"
+      }
+    },
+    {
+      "type": "amazon-ebs",
+      "name": "app-ami",
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_port": 5985,
+      "winrm_timeout": "30m",
+      "winrm_use_ssl": false,
+      "winrm_insecure": true,
+      "ami_name": "app-{{user `build_version`}}",
+      "ami_description": "ami-bb28b3c8",
       "source_ami": "{{user `source_ami`}}",
       "instance_type": "{{user `instance_type`}}",
       "region": "{{user `region`}}",
@@ -62,6 +89,15 @@
       "type": "powershell",
       "scripts": [
         "./scripts/common/provision-core.ps1"
+      ],
+      "only": ["base-ami"]
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/common/provision-build-user.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}",
+        "BUILD_USER_PASSWORD={{user `build_user_password`}}"
       ]
     },
     {
@@ -69,24 +105,36 @@
       "inline": [
         "md c:\\tmp\\deploy\\ops",
         "md c:\\tmp\\deploy\\app",
-        "md c:\\tmp\\packer",
+        "md c:\\tmp\\dsc",
         "md c:\\tmp\\boxstarter"
       ]
     },
     {
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/aws/DriveLetterConfig.xml",
-      "destination": "C:\\tmp\\deploy\\ops\\DriveLetterConfig.xml"
+      "destination": "C:\\tmp\\deploy\\ops\\DriveLetterConfig.xml",
+      "only": ["app-ami"]
     },
     {
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/deploy",
-      "destination": "C:\\tmp\\deploy\\app"
+      "destination": "C:\\tmp\\deploy\\app",
+      "only": ["app-ami"]
     },
     {
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/common/boxstarter.ps1",
-      "destination": "C:\\tmp\\boxstarter\\boxstarter.ps1"
+      "destination": "C:\\tmp\\boxstarter\\boxstarter.ps1",
+      "only": ["base-ami"]
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/common/provision-boxstarter.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}",
+        "BUILD_USER_PASSWORD={{user `build_user_password`}}"
+      ],
+      "only": ["base-ami"]
     },
     {
       "type": "dsc",
@@ -96,8 +144,8 @@
       "module_paths": [
         "../MyProject/dsc/modules"
       ],
-      "working_dir": "c:\\tmp\\packer",
-      "staging_dir": "c:\\tmp\\packer\\staging",
+      "working_dir": "c:\\tmp\\dsc\\working",
+      "staging_dir": "c:\\tmp\\dsc\\staging",
       "install_package_management": true,
       "install_modules": {
         "xWebAdministration": "1.11.0.0",
@@ -106,12 +154,34 @@
       "configuration_params": {
         "-MachineName": "localhost",
         "-SourcePath": "c:\\tmp\\deploy\\app\\MyWebsite"
-      }
+      },
+      "only": ["app-ami"]
     },
     {
       "type": "powershell",
       "scripts": [
         "./scripts/aws/ec2-config-ami.ps1"
+      ],
+      "only": ["base-ami"]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/aws/ec2-config-instance.ps1"
+      ],
+      "only": ["app-ami"]
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "Remove-Item c:\\tmp -Force -Recurse"
+      ]
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/common/remove-build-user.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}"
       ]
     }
   ]

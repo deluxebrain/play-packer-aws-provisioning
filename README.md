@@ -9,6 +9,20 @@ Using Packer to provision Windows servers in AWS
 4. [Tutorial series](http://www.onegeek.com.au/articles/machine-factories-part1-vagrant) going through provisioning via Virtualbox through to AWS
 5. [Vagrant-DSC plugin](https://github.com/mefellows/vagrant-dsc)
 
+## Prerequisites
+
+1. Terraform
+
+  ```brew install terraform```
+
+2. Packer 
+  - packer-dsc plugin
+3. Vagrant
+  - vagrant-dsc plugin
+4. jq
+5. Python and pip 
+6. AWS CLI
+
 ## Setting up Packer to build AWS images
 
 1. Create IAM policy setting up the required permissions
