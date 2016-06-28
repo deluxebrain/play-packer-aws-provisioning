@@ -66,6 +66,14 @@
     },
     {
       "type": "powershell",
+      "script": "./scripts/common/provision-build-user.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}",
+        "BUILD_USER_PASSWORD={{user `build_user_password`}}"
+      ]
+    },
+    {
+      "type": "powershell",
       "inline": [
         "md c:\\tmp\\deploy\\ops",
         "md c:\\tmp\\deploy\\app",
@@ -87,6 +95,14 @@
       "type": "file",
       "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/common/boxstarter.ps1",
       "destination": "C:\\tmp\\boxstarter\\boxstarter.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/common/provision-boxstarter.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}",
+        "BUILD_USER_PASSWORD={{user `build_user_password`}}"
+      ]
     },
     {
       "type": "dsc",
@@ -112,6 +128,13 @@
       "type": "powershell",
       "scripts": [
         "./scripts/aws/ec2-config-ami.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/common/remove-build-user.ps1",
+      "environment_vars": [
+        "BUILD_USER={{user `build_user`}}"
       ]
     }
   ]
