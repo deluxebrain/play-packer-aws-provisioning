@@ -7,6 +7,7 @@ AMI_ID="$(aws ec2 describe-images --filters "Name=name, Values=base-${BUILD_VERS
 
 echo "Building from ${AMI_ID}"
 packer build  \
+        -debug \
         -only app-ami \
         -var "source_ami=${AMI_ID}" \
-        -var-file template-app-ami.json packer-aws.json > packer.log
+        -var-file template-app-ami.json packer-aws.json

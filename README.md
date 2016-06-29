@@ -88,6 +88,11 @@ NOTE you'll also need to add in policies for ```Terraform```. See ```./terraform
     "ec2:GetConsoleOutput"
     ```
 
+  - Add in the following as part of modifying image launch permissions
+  ```json
+  "ec2:ResetImageAttribute"
+  ```
+
 2. Create AWS IAM user and attach the policy created in step 1
 
   E.g. ```agent-packer```

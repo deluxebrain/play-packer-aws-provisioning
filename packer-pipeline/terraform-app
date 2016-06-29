@@ -1,18 +1,75 @@
 #!/usr/bin/env bash
 
 # shellcheck source=/dev/null
-source ~/.secrets/packer/play
+source ~/.secrets/build/terraform
 
-AMI_ID="$(aws ec2 describe-images --filters "Name=name, Values=app-${BUILD_VERSION}" | jq .Images[0].ImageId | tr -d '"')"
+function get_ami_id()
+(       
+        # NOTE THE SCOPING
+        # TODO need to split into multiple scripts or have cross AWS account access
+        # shellcheck source=/dev/null
+        source ~/.secrets/build/packer
+        
+        aws ec2 describe-images \
+                --filters "Name=name, Values=app-${BUILD_VERSION}" \
+                | jq .Images[0].ImageId \
+                | tr -d '"'
+)
 
-echo "Building from ${AMI_ID}"
+function set_launch_permissions()
+(       
+        # NOTE THE SCOPING
+        # TODO need to split into multiple scripts or have cross AWS account access
+        # shellcheck source=/dev/null
+        source ~/.secrets/build/packer
+        
+        local ami_id="$1"
+        local aws_account="$2"
 
-# scans the current directory for the configuration (file ending in .tf)
-# apply
-# destroy
-terraform "$1" \
-        -var aws_profile=agent-build \
-        -var vpc_id="$BUILD_VPC_ID" \
-        -var subnet_eu_west_1a="$DEPLOY_SUBNET_EU_WEST_1A" \
-        -var subnet_eu_west_1b="$DEPLOY_SUBNET_EU_WEST_1B" \
-        -var ami_id="$AMI_ID"
+        # read
+        # -r      dont use / as an escape character
+        # -d ''   delimit on EOF instead of newline
+        #
+        # here-doc
+        # - The delimiter (JSON) is NOT in quotes so that we get paramter substitution
+        # - Use the <<- here-doc operation to allow indenting of the here-doc and the delimiter with tabs
+        read -r -d '' permissions <<-EOF
+{
+        "Add": [
+                {
+                        "UserId": "${aws_account}"
+                }
+        ]
+}
+EOF
+
+        echo "Removing any previous launch permissions from ami with id ${ami_id} ..."
+        aws ec2 reset-image-attribute --image-id "$ami_id" --attribute launchPermission || exit
+
+        echo "Adding in launch permnissions for account ${aws_account} ..."
+        aws ec2 modify-image-attribute --image-id "$ami_id" --launch-permission "$permissions" || exit
+)
+
+function perform_terraform()
+{
+        local action="$1"
+        local ami_id="$2"
+
+        # scans the current directory for the configuration (file ending in .tf)
+        # apply
+        # destroy
+        echo "Terraforming with action ${action} using AWS profile ${AWS_PROFILE} into aws account ${DEPLOY_AWS_DEV}"
+        terraform "$action" \
+                -var aws_profile="$AWS_PROFILE" \
+                -var vpc_id="$DEPLOY_VPC_ID" \
+                -var subnet_eu_west_1a="$DEPLOY_SUBNET_EU_WEST_1A" \
+                -var subnet_eu_west_1b="$DEPLOY_SUBNET_EU_WEST_1B" \
+                -var ami_id="$ami_id"
+}
+
+terraform_action="$1"
+
+ami_id="$(get_ami_id)" || exit
+set_launch_permissions "$ami_id" "$DEPLOY_AWS_DEV" || exit
+perform_terraform "$terraform_action" "$ami_id" || exit
+
