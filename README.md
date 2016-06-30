@@ -11,21 +11,26 @@ Using Packer to provision Windows servers in AWS
 
 ## Prerequisites
 
-1. Terraform
-
-  ```brew install terraform```
+1. Terraform 
+  - ```brew install terraform```
 
 2. Packer 
   - packer-dsc plugin
+
 3. Vagrant
   - vagrant-dsc plugin
+
 4. jq
+
 5. Python and pip 
+
 6. AWS CLI
+
 7. Graphviz (used with Terraform to show the terraform plan as a visualized graph)
+
 8. csvkit (used to generate AWS policies for terraform)
 
-## Setting up Packer to build AWS images
+## Setting up Packer and Terraform to build AWS images
 
 NOTE you'll also need to add in policies for ```Terraform```. See ```./terraform``` directory.
 
@@ -93,9 +98,12 @@ NOTE you'll also need to add in policies for ```Terraform```. See ```./terraform
   "ec2:ResetImageAttribute"
   ```
 
-2. Create AWS IAM user and attach the policy created in step 1
+2. Create AWS IAM users and attach the policy created in step 1
+
+  I usually run a separate user each for Packer and Terraform
 
   E.g. ```agent-packer```
+  E.g. ```agent-terraform```
 
 3. Setup AWS dotfiles
 
@@ -109,6 +117,8 @@ NOTE you'll also need to add in policies for ```Terraform```. See ```./terraform
   ```
 
 4. Setup AWS credentials for the packer build pipeline to use
+
+  **NOTE you appear to need to setup region in the ```credentials``` file even if its specified in your ```config``` file.**
 
   Packer [looks for credentials](https://www.packer.io/docs/builders/amazon.html) in the following locations:
 
@@ -128,6 +138,7 @@ NOTE you'll also need to add in policies for ```Terraform```. See ```./terraform
   [default]
   aws_access_key_id=
   aws_secret_access_key=
+  region=
   ```
 
   e.g. to use named credentials:
@@ -137,6 +148,7 @@ NOTE you'll also need to add in policies for ```Terraform```. See ```./terraform
   [foo]
   aws_access_key_id=
   aws_secret_access_key=
+  region=
   ```
 
   ```export AWS_PROFILE=foo```
