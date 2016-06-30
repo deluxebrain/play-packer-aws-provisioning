@@ -9,6 +9,7 @@ variable "ami_id" {}
 variable "instance_type" {
   default = "t2.small"
 }
+variable "key_name" {}
 variable "ssl_cert_id" {}
 variable "route53_zone_id" {}
 variable "route53_host_record" {}
@@ -26,7 +27,7 @@ resource "aws_route53_record" "www" {
   alias {
     name = "${aws_elb.myapp-main.dns_name}"
     zone_id = "${aws_elb.myapp-main.zone_id}"
-    evalute_target_health = true
+    evaluate_target_health = true
   }
 }
 
@@ -75,20 +76,8 @@ resource "aws_launch_configuration" "myapp-v1" {
   security_groups = [ "${aws_security_group.allow_web.id}"]
   instance_type = "${var.instance_type}"
   enable_monitoring = true
-  ebs_block_device {
-    device_name = "/dev/sda1"
-    volume_size = 80
-    volume_type = "gp2"
-    delete_on_termination = true
-    encrytped = true
-  }
-  ebs_block_device {
-    device_name = "xvdf"
-    volume_size = 20
-    volume_type = "gp2"
-    delete_on_termination = true
-    encrytped = true
-  }
+  key_name = "${var.key_name}"
+  associate_public_ip_address = true
   lifecycle {
     create_before_destroy = true
   }
@@ -113,10 +102,12 @@ resource "aws_autoscaling_group" "myapp-v1" {
   tag {
     key = "role"
     value = "www"
+    propagate_at_launch = true
   }
   tag {
     key = "service"
     value = "api"
+    propagate_at_launch = true
   }
 }
 

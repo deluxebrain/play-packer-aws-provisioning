@@ -12,7 +12,7 @@ foreach ($element in $xmlElementToModify.Plugin)
     if ($element.name -eq "Ec2SetPassword")
     {
         # Dont generate a random password
-        $element.State="False"
+        $element.State="Disabled"
     }
 }
 $xml.Save($EC2SettingsFile)

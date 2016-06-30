@@ -66,6 +66,7 @@ function perform_terraform()
                 -var subnet_eu_west_1a="$DEPLOY_SUBNET_EU_WEST_1A" \
                 -var subnet_eu_west_1b="$DEPLOY_SUBNET_EU_WEST_1B" \
                 -var ami_id="$ami_id" \
+                -var key_name="$DEPLOY_KEY_NAME" \
                 -var ssl_cert_id="$DEPLOY_SSL_CERT_ID" \
                 -var route53_zone_id="$DEPLOY_ROUTE53_ZONE_ID" \
                 -var route53_host_record="$DEPLOY_ROUTE53_HOST_RECORD"

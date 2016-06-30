@@ -31,8 +31,8 @@ foreach ($element in $xmlElementToModify.Plugin)
 {
     if ($element.name -eq "Ec2SetPassword")
     {
-        # Dont generate a random password
-        $element.State="Disabled"
+        # Instances will generate the password from the keypair
+        $element.State="Enabled"
     }
     elseif ($element.name -eq "Ec2SetComputerName")
     {
@@ -41,8 +41,8 @@ foreach ($element in $xmlElementToModify.Plugin)
     }
     elseif ($element.name -eq "Ec2HandleUserData")
     {
-        # Prevent subsequent execution of user data
-        $element.State="Disabled"
+        # Still may need user data later on
+        $element.State="Enabled"
     }
     elseif ($element.name -eq "Ec2SetDriveLetter")
     {
