@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 export EnableNuGetPackageRestore=true
-nuget "Install" "FAKE" "-OutputDirectory" "./build/packages" "-ExcludeVersion"
-nuget "Install" "FSharp.Data" "-OutputDirectory" "./build/packages" "-ExcludeVersion"
-mono "./build/packages/FAKE/tools/Fake.exe" build.fsx "$1"
+mono ./tools/nuget/nuget.exe "Install" "FAKE" "-OutputDirectory" "./build/packages" "-ExcludeVersion"
+mono ./tools/nuget/nuget.exe "Install" "FSharp.Data" "-OutputDirectory" "./build/packages" "-ExcludeVersion"
+mono ./build/packages/FAKE/tools/Fake.exe build.fsx
 
