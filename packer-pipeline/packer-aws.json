@@ -63,22 +63,6 @@
       "associate_public_ip_address": true,
       "ssh_private_ip": false,
       "force_deregister": true,
-      "ami_block_device_mappings": [
-        {
-          "device_name": "/dev/sda1",
-          "encrypted": false,
-          "volume_size": 80,
-          "volume_type": "gp2",
-          "delete_on_termination": true
-        },
-        {
-          "device_name": "xvdf",
-          "encrypted": false,
-          "volume_size": 20,
-          "volume_type": "gp2",
-          "delete_on_termination": true
-        }
-      ],
       "run_tags": {
           "Name": "{{user `instance_name`}}"
       }

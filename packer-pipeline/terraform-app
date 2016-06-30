@@ -61,10 +61,14 @@ function perform_terraform()
         echo "Terraforming with action ${action} using AWS profile ${AWS_PROFILE} into aws account ${DEPLOY_AWS_DEV}"
         terraform "$action" \
                 -var aws_profile="$AWS_PROFILE" \
+                -var env_name="$DEPLOY_ENV_NAME" \
                 -var vpc_id="$DEPLOY_VPC_ID" \
                 -var subnet_eu_west_1a="$DEPLOY_SUBNET_EU_WEST_1A" \
                 -var subnet_eu_west_1b="$DEPLOY_SUBNET_EU_WEST_1B" \
-                -var ami_id="$ami_id"
+                -var ami_id="$ami_id" \
+                -var ssl_cert_id="$DEPLOY_SSL_CERT_ID" \
+                -var route53_zone_id="$DEPLOY_ROUTE53_ZONE_ID" \
+                -var route53_host_record="$DEPLOY_ROUTE53_HOST_RECORD"
 }
 
 terraform_action="$1"
