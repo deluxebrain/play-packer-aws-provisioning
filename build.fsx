@@ -24,7 +24,7 @@ let buildDir = "./build/tmp/"
 let packagingRoot = "./build/packaging/"
 let deployDir = "./build/publish/"
 
-let version = defaultArg BuildNumber "1.0.0"
+let version = "1.0.0"
 
 tracefn "Version: %s" version
 
@@ -36,7 +36,7 @@ Target "Clean" (fun _ ->
 let dependencies = [ ]
 
 Target "CreatePackage" (fun _ ->
-    let packageDir = "./build/packages/"
+    let packageDir = "./Build/packages/"
     let autoDep x = x, GetPackageVersion packageDir x
     let dependenciesWithVersion = dependencies |> List.map autoDep
 
@@ -55,7 +55,7 @@ Target "CreatePackage" (fun _ ->
                      (@"MyProject/dsc/modules/**/*", Some "dsc", None)
                      (@"MyProject/dsc/manifests/*", Some "dsc", None)
                      (@"MyProject/Install/*", Some "tools", None)]
-
+            
             Publish = false })
 )
 
