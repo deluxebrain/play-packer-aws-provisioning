@@ -37,6 +37,24 @@ The ```create_rules``` shell script generates an appropriately named policy file
 To enable machine instances to be created using the packer generated AMI images, the backing volumes of the image must be created unencrytped.
 Additionally, the launch permissions on the image must be explicitly set to allow creation from the required accounts.
 
+## Setup
+
+NOTE that Terraform generates ```state``` files that potentially can contain secret information. There is no inbuilt facility encrypt the state files, so my current approach is to ensure that they are generated outside of the parent git repository. There are use cases of Terraform for which sharing of the state file across team members is required. In these instances a manual encryption step will be required before committing the file to the repository.
+
+### State file path
+
+If you are using non-default state paths then ensure the containing path exists. E.g, for
+
+```shell
+terraform -state=/var/terraform/myapp/terraform.tfstate
+```
+
+ensure that the following path exists:
+
+```shell
+/var/terraform/myapp
+```
+
 ## Running Terraform
 
 All terraform commands should be run from the directory containing the Terraform configuration file (```*.tf```) which is discovered at runtime through directory scanning.

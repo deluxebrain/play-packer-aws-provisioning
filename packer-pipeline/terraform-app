@@ -58,8 +58,12 @@ function perform_terraform()
         # scans the current directory for the configuration (file ending in .tf)
         # apply
         # destroy
+        # terraform:
+        # backup=   Set to - to prevent generation of terraform.tfstate.backup files
         echo "Terraforming with action ${action} using AWS profile ${AWS_PROFILE} into aws account ${DEPLOY_AWS_DEV}"
         terraform "$action" \
+                -state="$DEPLOY_STATE_PATH" \
+                -backup=- \
                 -var aws_profile="$AWS_PROFILE" \
                 -var env_name="$DEPLOY_ENV_NAME" \
                 -var vpc_id="$DEPLOY_VPC_ID" \

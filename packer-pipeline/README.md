@@ -24,6 +24,12 @@ This is not yet available via the usual packer plugin distribution model.
   export PATH=$PATH:$GOBIN;
   ```
 
+  Install gox (cross compiler)
+
+  ```shell
+  go get github.com/mitchellh/gox
+  ```
+
 3. Get the source
 
   ```shell
