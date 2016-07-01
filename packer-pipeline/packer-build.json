@@ -1,0 +1,51 @@
+{
+  "variables": {
+    "build_version": "{{env `BUILD_VERSION`}}",
+    "source_ami": "",
+    "instance_type": "",
+    "instance_name": "{{env `BUILD_INSTANCE_NAME`}}",
+    "vpc_id": "{{env `BUILD_VPC_ID`}}",
+    "subnet_id": "{{env `BUILD_SUBNET_ID`}}",
+    "region": "eu-west-1",
+    "ami_name": "",
+    "ami_description": ""
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "name": "build-ami",
+      "ami_name": "build-{{user `build_version`}}",
+      "ami_description": "Build server",
+      "source_ami": "{{user `source_ami`}}",
+      "instance_type": "{{user `instance_type`}}",
+      "region": "{{user `region`}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "security_group_ids": [
+        "sg-adf294ca",
+        "sg-83e98fe4"
+      ],
+      "associate_public_ip_address": true,
+      "force_deregister": true,
+      "ssh_username": "ec2-user",
+      "ami_block_device_mappings": [
+        {
+          "device_name": "/dev/xvda",
+          "encrypted": true,
+          "volume_size": 20,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "run_tags": {
+          "Name": "{{user `instance_name`}}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "./scripts/build/provision-build.sh"
+    }
+  ]
+}

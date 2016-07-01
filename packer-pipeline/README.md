@@ -94,4 +94,18 @@ rm -rf ~/VirtualBox/VMs/<name>/*
   vagrant plugin install <path>
   ```
 
+## Snippets
+
+### Packer 
+
+- How do I tell what my script is doing?
+  
+  Add ```-x``` to shebang
+
+  ```shell
+  #!/bin/bash -x
+  ```
+
+
+
 

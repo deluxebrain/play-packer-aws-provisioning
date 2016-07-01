@@ -121,19 +121,19 @@
     },
     {
       "type": "file",
-      "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/aws/DriveLetterConfig.xml",
+      "source": "./scripts/aws/DriveLetterConfig.xml",
       "destination": "C:\\tmp\\deploy\\ops\\DriveLetterConfig.xml",
       "only": ["app-ami"]
     },
     {
       "type": "file",
-      "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/MyProject/deploy",
+      "source": "../MyProject/deploy",
       "destination": "C:\\tmp\\deploy\\app",
       "only": ["app-ami"]
     },
     {
       "type": "file",
-      "source": "/Users/deluxebrain/Repos/deluxebrain/play-packer-aws-provisioning/packer-pipeline/scripts/common/boxstarter.ps1",
+      "source": "./scripts/common/boxstarter.ps1",
       "destination": "C:\\tmp\\boxstarter\\boxstarter.ps1",
       "only": ["base-ami"]
     },

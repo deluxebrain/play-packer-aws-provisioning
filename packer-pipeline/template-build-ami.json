@@ -1,0 +1,4 @@
+{
+  "source_ami": "ami-f9dd458a",
+  "instance_type": "t2.small"
+}

@@ -1,0 +1,9 @@
+- hosts: 'localhost'
+  roles:
+    - role: 'ssilab.aws-cli'
+      aws_output_format: 'json'
+      aws_region: 'eu-west-1'
+      aws_access_key_id: 'test'
+      aws_secret_access_key: 'test'
+
+
