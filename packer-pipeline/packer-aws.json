@@ -103,13 +103,21 @@
     {
       "type": "powershell",
       "inline": [
+        "md c:\\tmp\\dsc\\base\\staging",
+        "md c:\\tmp\\dsc\\base\\working",
+        "md c:\\tmp\\boxstarter"
+      ],
+      "only": ["base-ami"]
+    },
+    {
+      "type": "powershell",
+      "inline": [
         "md c:\\tmp\\deploy\\ops",
         "md c:\\tmp\\deploy\\app",
-        "md c:\\tmp\\dsc",
-        "md c:\\tmp\\dsc\\staging",
-        "md c:\\tmp\\dsc\\working",
-        "md c:\\tmp\\boxstarter"
-      ]
+        "md c:\\tmp\\dsc\\app\\staging",
+        "md c:\\tmp\\dsc\\app\\working"
+      ],
+      "only": ["app-ami"]
     },
     {
       "type": "file",
@@ -140,14 +148,31 @@
     },
     {
       "type": "dsc",
+      "configuration_name": "MyServer",
+      "configuration_file": "../BaseServer/dsc/manifests/MyServerConfig.psd1",
+      "manifest_file": "../BaseServer/dsc/manifests/MyServer.ps1",
+      "working_dir": "c:\\tmp\\dsc\\base\\working",
+      "staging_dir": "c:\\tmp\\dsc\\base\\staging",
+      "install_package_management": true,
+      "install_modules": {
+        "xWebAdministration": "1.11.0.0",
+        "xNetworking": "2.9.0.0"
+      },
+      "configuration_params": {
+        "-MachineName": "localhost"
+      },
+      "only": ["base-ami"]
+    },
+    {
+      "type": "dsc",
       "configuration_name": "MyProject",
       "configuration_file": "../MyProject/dsc/manifests/MyProjectConfig.psd1",
       "manifest_file": "../MyProject/dsc/manifests/MyProject.ps1",
       "module_paths": [
         "../MyProject/dsc/modules"
       ],
-      "working_dir": "c:\\tmp\\dsc\\working",
-      "staging_dir": "c:\\tmp\\dsc\\staging",
+      "working_dir": "c:\\tmp\\dsc\\app\\working",
+      "staging_dir": "c:\\tmp\\dsc\\app\\staging",
       "install_package_management": true,
       "install_modules": {
         "xWebAdministration": "1.11.0.0",

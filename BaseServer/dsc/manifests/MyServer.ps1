@@ -15,15 +15,6 @@ Configuration MyServer
   
   Node $MachineName
   {
-      File DriveLetterConfig
-      {
-        Ensure = "Present"  
-        SourcePath = "C:\tmp\deploy\ops\DriveLetterConfig.xml"
-        DestinationPath = "C:\Program Files\Amazon\Ec2ConfigService\Settings\"
-        Recurse = $false
-        Type = "File"
-      }
-
       WindowsFeature IIS
       {
         Ensure = "Present"
