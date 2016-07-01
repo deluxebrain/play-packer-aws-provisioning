@@ -20,6 +20,7 @@ let streamKey = "se"
 
 // Paths
 let root = "./"
+let artefactsDir = "./MyProject/deploy/"
 let buildDir = "./build/tmp/"
 let packagingRoot = "./build/packaging/"
 let deployDir = "./build/publish/"
@@ -31,6 +32,12 @@ tracefn "Version: %s" version
 // Targets
 Target "Clean" (fun _ ->
     CleanDirs [ buildDir; packagingRoot; deployDir ]
+)
+
+Target "CopyArtefacts" (fun _ ->
+    let targetDir = buildDir @@ "dist"
+    let sourceDir = artefactsDir
+    CopyDir targetDir sourceDir (fun x -> true)
 )
 
 let dependencies = [ ]
@@ -77,6 +84,7 @@ Target "All" DoNothing
 
 // Dependencies
 "Clean"
+    ==> "CopyArtefacts"
     ==> "CreatePackage"
     ==> "CreateSourceZip"
     ==> "All"
