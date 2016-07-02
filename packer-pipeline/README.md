@@ -106,6 +106,27 @@ rm -rf ~/VirtualBox/VMs/<name>/*
   #!/bin/bash -x
   ```
 
+### Packer and WinRM
+
+When packer provisions a Windows box, it waits for WinRM to become available before proceeding along the provisioners chain, and eventually rebooting.
+
+As WinRM is needed for the build chain to proceed, it needs to be provisioned as part of the installation of the OS. 
+
+For virtualbox images, this is done using the ```<FirstLogonCommands>``` within the autounattend file.
+
+For aws images, this is done in the user-data file.
+
+### Boxstarter
+
+Boxstarter only really works when run locally on the box - i.e. not when used over winrm. 
+
+For this reason, it should be limited to being used within the autounattend file or the user-data file.
+
+It *can* be used across the build chain - but for anything that wont work over powershell remoting the actions need to be wrapped in a task. Additionally, there no real way to orchestrate the construction and removal of the task across reboots. I.e. - dont perform any reboots in the actions as the rest of the actions (post the reboot) wont happen.
+
+Additionally, theres a bit of a clash between packer and Boxstarter where reboots are concerned. When Boxstarter is used from e.g. the autounattend file, the packer build pipeline effectively paused until winrm becomes available. This means that you can reboot the box as many times as you want from within Boxstarter **up to the point you enable winrm**.
+
+When using Boxstarter from within the packer build pipeline, any reboots from within Boxstarter will cause subsequent packer commands to fail due to *pending restart*. Probably ways around this (e.g. sleeping the packer pipeline to allow the reboot to happen) - but best to just avoid it really.
 
 
 
