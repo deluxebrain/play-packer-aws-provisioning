@@ -128,5 +128,24 @@ Additionally, theres a bit of a clash between packer and Boxstarter where reboot
 
 When using Boxstarter from within the packer build pipeline, any reboots from within Boxstarter will cause subsequent packer commands to fail due to *pending restart*. Probably ways around this (e.g. sleeping the packer pipeline to allow the reboot to happen) - but best to just avoid it really.
 
+### The packer build pipeline and winrm
+
+The packer build pipeline is constructed from two main parts; the ```builder``` stage and the ```provisioning``` stage.
+
+The ```builder``` stage is managed by the underlying hypervisor - configured via the packer builder json and the hypervisor specific build file (autounattend in the case of vbox, user-data in the case of aws, etc).
+
+The ```provisioner``` stage is managed by packer, and is effectively a series of steps performed over ssh/winrm as configured in the associated packer template.
+
+The question then is - when does the builder stage end and the provisioner stage begin?
+
+This is an immensely important consideration - and has a certain amount of effect on how your build pipeline is put together. As soon as the configured connectivity has been established (winrm or ssh), packer will take over and start executing the provisioning pipeline.
+
+I.e. - turning on winrm must be the last thing done in the build stage, and must be toggled off/on at any point where you need to pause the packer provisioning.
+
+### Windows server RAM sizing
+
+Windows Server 2012 r2 Windows updates fails for RAM sizing below 4GB.
+
+
 
 
