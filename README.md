@@ -12,13 +12,16 @@ Using Packer to provision Windows servers in AWS
 ## Prerequisites
 
 1. Terraform 
-  - ```brew install terraform```
+
+- ```brew install terraform```
 
 2. Packer 
-  - packer-dsc plugin
+
+- packer-dsc plugin
 
 3. Vagrant
-  - vagrant-dsc plugin
+
+- vagrant-dsc plugin
 
 4. jq
 
